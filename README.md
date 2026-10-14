@@ -59,32 +59,50 @@ The IT Service Request Management System is a web-based application developed us
 
 4. Install Django:
 
-  ```markdown
-  Install the project dependencies:
+   ```markdown
+   Install the project dependencies:
 
-```bash
+  ```bash
 pip install -r requirements.txt
    ```
 
-5. Apply database migrations:
+5. Configure your environment variables:
+
+   Create a `.env` file by copying `.env.example`:
+
+   ```powershell
+   Copy-Item .env.example .env
+   ```
+
+   Generate a new Django secret key:
+
+   ```powershell
+   python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+   ```
+
+   Copy the generated key into `.env`, replacing the placeholder value for `DJANGO_SECRET_KEY`.
+   Do not upload your `.env` file to GitHub.
+
+
+6. Apply database migrations:
 
    ```bash
    python manage.py migrate
    ```
 
-6. Create an administrator account:
+7. Create an administrator account:
 
    ```bash
    python manage.py createsuperuser
    ```
 
-7. Start the development server:
+8. Start the development server:
 
    ```bash
    python manage.py runserver
    ```
 
-8. Open `http://127.0.0.1:8000/` in your browser.
+9. Open `http://127.0.0.1:8000/` in your browser.
 
 ## Project Status
 
