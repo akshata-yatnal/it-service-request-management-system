@@ -1,0 +1,37 @@
+
+
+{% extends 'service/base.html' %}
+
+{% block title %}
+Create Ticket | IT Service Management
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-7">
+
+            <h2 class="mb-4">Create Service Request</h2>
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button type="submit" class="btn btn-primary">
+                    Submit Request
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

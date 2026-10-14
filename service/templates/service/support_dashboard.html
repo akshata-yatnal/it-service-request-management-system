@@ -1,0 +1,353 @@
+django
+{% extends 'service/base.html' %}
+
+{% block title %}
+
+Support Dashboard | IT Service Management
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <!-- Dashboard heading -->
+    <h2 class="mb-4">Support Dashboard</h2>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+
+    <!-- Dashboard Statistics -->
+
+    <!-- Dashboard Statistics -->
+    <h3 class="mb-3">Ticket Statistics</h3>
+
+    <div class="row g-3 mb-4">
+
+        <!-- Total Tickets -->
+        <div class="col-md">
+            <div class="card shadow-sm h-100 bg-light">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Tickets</h6>
+                    <h3>{{ total_tickets }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Open Tickets -->
+        <div class="col-md">
+            <div class="card shadow-sm h-100 bg-primary-subtle">
+                <div class="card-body">
+                    <h6 class="text-muted">Open Tickets</h6>
+                    <h3>{{ open_tickets }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- In Progress Tickets -->
+        <div class="col-md">
+            <div class="card shadow-sm h-100 bg-warning-subtle">
+                <div class="card-body">
+                    <h6 class="text-muted">In Progress</h6>
+                    <h3>{{ in_progress_tickets }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resolved Tickets -->
+        <div class="col-md">
+            <div class="card shadow-sm h-100 bg-success-subtle">
+                <div class="card-body">
+                    <h6 class="text-muted">Resolved Tickets</h6>
+                    <h3>{{ resolved_tickets }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Closed Tickets -->
+        <div class="col-md">
+            <div class="card shadow-sm h-100 bg-secondary-subtle">
+                <div class="card-body">
+                    <h6 class="text-muted">Closed Tickets</h6>
+                    <h3>{{ closed_tickets }}</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <!-- Search and filter tickets -->
+    <form method="GET">
+        <!-- Search tickets by title -->
+        <input type="text" name="search" placeholder="Search by ticket title" value="{{ request.GET.search }}">
+
+        <!-- Filter tickets by status -->
+        <!-- Filter tickets by status -->
+        <select name="status">
+
+            <option value="" {% if not request.GET.status %}selected{% endif %}>
+                All Statuses
+            </option>
+
+            <option value="Open" {% if request.GET.status == 'Open' %}selected{% endif %}>
+                Open
+            </option>
+
+            <option value="In Progress" {% if request.GET.status == 'In Progress' %}selected{% endif %}>
+                In Progress
+            </option>
+
+            <option value="Resolved" {% if request.GET.status == 'Resolved' %}selected{% endif %}>
+                Resolved
+            </option>
+
+            <option value="Closed" {% if request.GET.status == 'Closed' %}selected{% endif %}>
+                Closed
+            </option>
+
+        </select>
+
+        <!-- Filter tickets by priority -->
+        <select name="priority">
+            <option value="">All Priorities</option>
+
+            <option value="Low" {% if request.GET.priority == 'Low' %}selected{% endif %}>Low</option>
+
+            <option value="Medium" {% if request.GET.priority == 'Medium' %}selected{% endif %}>Medium</option>
+
+            <option value="High" {% if request.GET.priority == 'High' %}selected{% endif %}>High</option>
+
+            <option value="Critical" {% if request.GET.priority == 'Critical' %}selected{% endif %}>Critical</option>
+        </select>
+
+        <button type="submit">Search / Filter</button>
+        <a href="/support-dashboard/" class="btn btn-secondary btn-sm">Clear Filters</a>
+    </form>
+
+    <!-- Display all tickets in a table -->
+    <table class="table table-bordered">
+
+        <thead>
+            <tr>
+
+                <!-- Basic ticket information -->
+                <th>ID</th>
+                <th>Title</th>
+                <th>Created By</th>
+                <th>Category</th>
+                <th>Priority</th>
+
+                <!-- Support staff can update the ticket status -->
+                <th>Status</th>
+
+                <!-- Support staff can assign the ticket to a user -->
+                <th>Assigned To</th>
+
+                <!-- Support staff can enter the solution/resolution -->
+                <th>Resolution</th>
+
+            </tr>
+        </thead>
+
+
+        <tbody>
+
+            <!-- Loop thrnt from the view -->
+            {% for ticket in tickets %}
+
+            <tr>
+
+                <!-- Display ticket ID -->
+                <td>{{ ticket.id }}</td>
+
+
+                <!-- Make the ticket title clickable
+                     Clicking it opens the ticket detail page -->
+                <td>
+                    <a href="/ticket/{{ ticket.id }}/">
+                        {{ ticket.title }}
+                    </a>
+                </td>
+
+
+                <!-- Display the username of the person who created the ticket -->
+                <td>{{ ticket.created_by.username }}</td>
+
+
+                <!-- Display ticket category -->
+                <td>{{ ticket.category }}</td>
+
+
+                <!-- Display ticket priority -->
+                <td>{{ ticket.priority }}</td>
+
+
+                <!-- =================================================
+                     STATUS UPDATE
+                     ================================================= -->
+
+                <!-- Form used to update the ticket status -->
+                <td>
+
+                    <form method="POST">
+
+                        <!-- Required for Django POST forms -->
+                        {% csrf_token %}
+
+
+                        <!-- Hidden field:
+                             tells the view which ticket we are updating -->
+                        <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+
+
+                        <!-- Status dropdown -->
+                        <select name="status">
+
+                            <!--
+                            STATUS_CHOICES comes from the Ticket model.
+
+                            value = database value
+                            label = value displayed to the user
+
+                            Example:
+                            ('open', 'Open')
+                            ('resolved', 'Resolved')
+                            -->
+
+                            {% for value, label in ticket.STATUS_CHOICES %}
+                            <option value="{{ value }}" {% if ticket.status == value %}selected{% endif %}>{{ label }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+
+                        <!-- Submit button for updating status -->
+                        <button type="submit" class="btn btn-primary btn-sm mt-2">
+
+                            Update Status
+
+                        </button>
+
+                    </form>
+
+                </td>
+
+
+                <!-- =================================================
+                     ASSIGN TICKET
+                     ================================================= -->
+
+                <!-- Form used to assign the ticket to a support user -->
+                <td>
+
+                    <form method="POST">
+
+                        <!-- Required for Django POST forms -->
+                        {% csrf_token %}
+
+
+                        <!-- Hidden field:
+                             tells the view which ticket is being assigned -->
+                        <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+
+
+                        <!-- Assignment dropdown -->
+                        <select name="assigned_to" class="form-select">
+
+
+                            <!-- Option when nobody is assigned -->
+                            <option value="">
+                                Not assigned
+                            </option>
+
+
+                            <!--
+                            Loop through the users sent from the view.
+
+                            'users' should contain the support users
+                            who can be assigned to tickets.
+                            -->
+                            {% for user in users %}
+
+
+
+                            <!-- Keep the currently assigned user selected -->
+                            <option value="{{ user.id }}" {% if ticket.assigned_to_id == user.id %}selected{% endif %}>
+                                {{ user.username }}
+                            </option>
+
+
+
+                            {% endfor %}
+                        </select>
+
+
+                        <!-- Submit button for assigning the ticket -->
+                        <button type="submit" class="btn btn-primary btn-sm mt-2">Assign</button>
+
+                    </form>
+
+                </td>
+
+
+                <!-- =================================================
+                     RESOLUTION
+                     ================================================= -->
+
+                <!-- Form used to save the ticket resolution -->
+                <td>
+
+                    <form method="POST">
+
+                        <!-- Required for Django POST forms -->
+                        {% csrf_token %}
+
+
+                        <!-- Hidden field:
+                             tells the view which ticket we are updating -->
+                        <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+
+
+                        <!--
+                        Text box where support staff can
+                        enter the solution/resolution.
+                        -->
+                        <textarea name="resolution" class="form-control" rows="2"
+                            placeholder="Enter resolution">{{ ticket.resolution|default:"" }}</textarea>
+
+
+                        <!-- Submit button for saving resolution -->
+                        <button type="submit" class="btn btn-success btn-sm mt-2">
+
+                            Save Resolution
+
+                        </button>
+
+                    </form>
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center text-muted py-3">
+                    No tickets match your search or filters.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>ough all tickets se
+
+</div>
+
+{% endblock %}
