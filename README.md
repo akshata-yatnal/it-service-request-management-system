@@ -59,8 +59,11 @@ The IT Service Request Management System is a web-based application developed us
 
 4. Install Django:
 
-   ```bash
-   pip install django
+  ```markdown
+  Install the project dependencies:
+
+```bash
+pip install -r requirements.txt
    ```
 
 5. Apply database migrations:
