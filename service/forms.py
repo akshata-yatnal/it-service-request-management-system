@@ -12,13 +12,7 @@ class TicketForm(forms.ModelForm):
             'category',
             'priority',
         ]
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # Allow assignment only to support staff
-        self.fields['assigned_to'].queryset = User.objects.filter(is_staff=True)
-
-
+    
 # Create the Comment form
 
 class CommentForm(forms.ModelForm):
@@ -35,6 +29,14 @@ class TicketAssignmentForm(forms.ModelForm):
         fields = [
             'assigned_to',
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Allow assignment only to support staff
+        self.fields['assigned_to'].queryset = User.objects.filter(
+            is_staff=True
+        )
 
 # Change ticket status
 class TicketStatusForm(forms.ModelForm):

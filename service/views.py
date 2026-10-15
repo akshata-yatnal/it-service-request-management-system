@@ -188,8 +188,7 @@ def support_dashboard(request):
 
         elif 'status' in request.POST:
              # Check whether the ticket is being marked as Resolved
-            if request.POST.get('status') == 'Resolved' and not ticket.resolution.strip():
-                 # Show an error when resolution is empty
+            if request.POST.get('status') == 'Resolved' and not (ticket.resolution or '').strip():                 # Show an error when resolution is empty
                 messages.error(request, 'Please add a resolution message before resolving the ticket.')
                 # Do not allow resolution without a resolution message
                 return redirect('/support-dashboard/')
