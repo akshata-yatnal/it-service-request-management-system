@@ -4,6 +4,10 @@
 
 The IT Service Request Management System is a web-based application developed using Python and Django. It helps employees raise IT support requests and allows support staff to manage, assign, track, and resolve tickets through a centralized dashboard.
 
+
+## Screenshots
+![Support Dashboard](./screenshots/support-dashboard.png)
+
 ## Features
 
 ### Employee
