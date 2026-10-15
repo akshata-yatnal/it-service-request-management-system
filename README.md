@@ -109,6 +109,17 @@ pip install -r requirements.txt
 
 9. Open `http://127.0.0.1:8000/` in your browser.
 
+
+## Running Tests
+
+Run the automated test suite from the project folder containing `manage.py`:
+
+```bash
+python manage.py test
+```
+
+The test suite covers model behaviour, page loading, login validation, ticket creation, access control, ticket privacy, comments, dashboard search and priority filtering, and resolution validation.
+
 ## Project Status
 
 The project includes ticket creation, ticket tracking, role-based access checks, assignment, comments, resolution validation, search, filtering, and dashboard statistics. Further testing and improvements may be added as development continues.
