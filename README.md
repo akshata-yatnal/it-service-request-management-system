@@ -7,6 +7,7 @@ The IT Service Request Management System is a web-based application developed us
 
 ## Screenshots
 ![Support Dashboard](./screenshots/support-dashboard.png)
+![Ticket Details](./screenshots/ticket-details.png)
 
 ## Features
 
